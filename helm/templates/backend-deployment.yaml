@@ -1,0 +1,58 @@
+{{/*
+  backend-deployment.yaml
+  Helm template for Backend Kubernetes Deployment
+  All values are configurable via values.yaml
+*/}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  replicas: {{ .Values.backend.replicas }}
+  selector:
+    matchLabels:
+      app: backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: rag-backend
+          image: {{ .Values.backend.image }}
+          env:
+            - name: NODE_ENV
+              value: {{ .Values.backend.env.NODE_ENV }}
+            - name: OLLAMA_HOST
+              value: {{ .Values.backend.env.OLLAMA_HOST }}
+            - name: RAG_API_URL
+              value: {{ .Values.backend.env.RAG_API_URL }}
+          livenessProbe:
+            exec:
+              command:
+                - curl
+                - -f
+                - http://localhost:{{ .Values.backend.service.port }}/health
+            failureThreshold: 3
+            periodSeconds: 30
+            timeoutSeconds: 10
+          ports:
+            - containerPort: {{ .Values.backend.service.port }}
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /app/backend
+              name: backend-db
+            - mountPath: /app/shared_uploads
+              name: rag-api-shareduploads
+      restartPolicy: Always
+      volumes:
+        - name: backend-db
+          persistentVolumeClaim:
+            claimName: backend-db-claim
+        - name: rag-api-shareduploads
+          persistentVolumeClaim:
+            claimName: rag-api-shareduploads-claim

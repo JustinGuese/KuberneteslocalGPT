@@ -1,0 +1,80 @@
+backend:
+  image: guestros/localgpt-backend:latest
+  replicas: 1
+  env:
+    NODE_ENV: production
+    OLLAMA_HOST: http://ollama:11434
+    RAG_API_URL: http://rag-api:8001
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  service:
+    port: 8000
+  persistence:
+    db:
+      size: 100Mi
+      accessMode: ReadWriteOnce
+    sharedUploads:
+      size: 100Mi
+      accessMode: ReadWriteMany
+frontend:
+  image: guestros/localgpt-frontend:latest
+  replicas: 1
+  env:
+    NEXT_PUBLIC_API_URL: http://localhost:8000
+    NODE_ENV: production
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  service:
+    port: 3000
+ragApi:
+  image: guestros/localgpt-rag-api:latest
+  replicas: 1
+  env:
+    NODE_ENV: production
+    OLLAMA_HOST: http://host.docker.internal:11434
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  service:
+    port: 8001
+  persistence:
+    lancedb:
+      size: 100Mi
+      accessMode: ReadWriteOnce
+    indexstore:
+      size: 100Mi
+      accessMode: ReadWriteOnce
+    sharedUploads:
+      size: 100Mi
+      accessMode: ReadWriteMany
+
+ollama:
+  image: ollama/ollama:latest
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  service:
+    port: 11434
+  persistence:
+    data:
+      size: 10Gi
+      accessMode: ReadWriteOnce

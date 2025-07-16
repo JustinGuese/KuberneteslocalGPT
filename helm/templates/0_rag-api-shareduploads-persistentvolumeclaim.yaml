@@ -1,0 +1,17 @@
+{{/*
+  0_rag-api-shareduploads-persistentvolumeclaim.yaml
+  Helm template for RAG API Shared Uploads PVC
+  All values are configurable via values.yaml
+*/}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rag-api-shareduploads-claim
+  labels:
+    app: rag-api-shareduploads-claim
+spec:
+  accessModes:
+    - {{ .Values.ragApi.persistence.sharedUploads.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.ragApi.persistence.sharedUploads.size }}

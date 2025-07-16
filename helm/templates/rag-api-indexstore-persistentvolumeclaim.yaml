@@ -1,0 +1,17 @@
+{{/*
+  rag-api-indexstore-persistentvolumeclaim.yaml
+  Helm template for RAG API IndexStore PVC
+  All values are configurable via values.yaml
+*/}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rag-api-indexstore-claim
+  labels:
+    app: rag-api-indexstore-claim
+spec:
+  accessModes:
+    - {{ .Values.ragApi.persistence.indexstore.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.ragApi.persistence.indexstore.size }}

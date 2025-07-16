@@ -1,0 +1,17 @@
+{{/*
+  rag-api-lancedb-persistentvolumeclaim.yaml
+  Helm template for RAG API LanceDB PVC
+  All values are configurable via values.yaml
+*/}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rag-api-lancedb-claim
+  labels:
+    app: rag-api-lancedb-claim
+spec:
+  accessModes:
+    - {{ .Values.ragApi.persistence.lancedb.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.ragApi.persistence.lancedb.size }}
