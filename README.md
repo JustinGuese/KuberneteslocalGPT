@@ -117,7 +117,20 @@ docker compose logs -f
 ./start-docker.sh stop
 ```
 
-### Option 2: Direct Development (Recommended for Development)
+### Option 2: Helm Chart Deployment
+
+```bash
+# Deploy to your Kubernetes cluster
+helm upgrade --install localgpt ./helm -n localgpt --create-namespace
+
+# Uninstall the deployment
+helm uninstall localgpt
+```
+
+- The chart will deploy backend, frontend, rag-api, and ollama services.
+- You can customize settings in `helm/values.yaml` before deploying.
+
+### Option 3: Direct Development (Recommended for Development)
 
 ```bash
 # Clone the repository
@@ -182,7 +195,7 @@ The `run_system.py` launcher manages four key services:
 - **Backend Server** (port 8000): Session management and API endpoints
 - **Frontend Server** (port 3000): React/Next.js web interface
 
-### Option 3: Manual Component Startup
+### Option 4: Manual Component Startup
 
 ```bash
 # Terminal 1: Start Ollama
