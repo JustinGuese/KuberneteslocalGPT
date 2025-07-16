@@ -1,0 +1,18 @@
+{{/*
+  frontend-service.yaml
+  Helm template for Frontend Kubernetes Service
+  All values are configurable via values.yaml
+*/}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  ports:
+    - name: "frontend"
+      port: {{ .Values.frontend.service.port }}
+      targetPort: {{ .Values.frontend.service.port }}
+  selector:
+    app: frontend

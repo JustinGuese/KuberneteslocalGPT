@@ -1,0 +1,18 @@
+{{/*
+  rag-api-service.yaml
+  Helm template for RAG API Kubernetes Service
+  All values are configurable via values.yaml
+*/}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: rag-api
+  labels:
+    app: rag-api
+spec:
+  ports:
+    - name: "rag-api"
+      port: {{ .Values.ragApi.service.port }}
+      targetPort: {{ .Values.ragApi.service.port }}
+  selector:
+    app: rag-api

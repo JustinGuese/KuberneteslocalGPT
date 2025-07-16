@@ -1,0 +1,17 @@
+{{/*
+  ollama-pvc.yaml
+  Helm template for Ollama PersistentVolumeClaim
+  All values are configurable via values.yaml
+*/}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ollama-data-claim
+  labels:
+    app: ollama
+spec:
+  accessModes:
+    - {{ .Values.ollama.persistence.data.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.ollama.persistence.data.size }}

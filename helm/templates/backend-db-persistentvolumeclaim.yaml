@@ -1,0 +1,17 @@
+{{/*
+  backend-db-persistentvolumeclaim.yaml
+  Helm template for Backend DB PVC
+  All values are configurable via values.yaml
+*/}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backend-db-claim
+  labels:
+    app: backend-db-claim
+spec:
+  accessModes:
+    - {{ .Values.backend.persistence.db.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.backend.persistence.db.size }}

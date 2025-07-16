@@ -1,0 +1,18 @@
+{{/*
+  ollama-service.yaml
+  Helm template for Ollama Kubernetes Service
+  All values are configurable via values.yaml
+*/}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama
+  labels:
+    app: ollama
+spec:
+  ports:
+    - name: "ollama"
+      port: {{ .Values.ollama.service.port }}
+      targetPort: {{ .Values.ollama.service.port }}
+  selector:
+    app: ollama

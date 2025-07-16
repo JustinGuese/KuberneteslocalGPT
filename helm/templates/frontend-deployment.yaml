@@ -1,0 +1,42 @@
+{{/*
+  frontend-deployment.yaml
+  Helm template for Frontend Kubernetes Deployment
+  All values are configurable via values.yaml
+*/}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  replicas: {{ .Values.frontend.replicas }}
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: rag-frontend
+          image: {{ .Values.frontend.image }}
+          env:
+            - name: NEXT_PUBLIC_API_URL
+              value: {{ .Values.frontend.env.NEXT_PUBLIC_API_URL }}
+            - name: NODE_ENV
+              value: {{ .Values.frontend.env.NODE_ENV }}
+          livenessProbe:
+            exec:
+              command:
+                - curl
+                - -f
+                - http://localhost:{{ .Values.frontend.service.port }}
+            failureThreshold: 3
+            periodSeconds: 30
+            timeoutSeconds: 10
+          ports:
+            - containerPort: {{ .Values.frontend.service.port }}
+              protocol: TCP
+      restartPolicy: Always

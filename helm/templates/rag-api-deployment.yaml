@@ -1,0 +1,61 @@
+{{/*
+  rag-api-deployment.yaml
+  Helm template for RAG API Kubernetes Deployment
+  All values are configurable via values.yaml
+*/}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rag-api
+  labels:
+    app: rag-api
+spec:
+  replicas: {{ .Values.ragApi.replicas }}
+  selector:
+    matchLabels:
+      app: rag-api
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: rag-api
+    spec:
+      containers:
+        - name: rag-api
+          image: {{ .Values.ragApi.image }}
+          env:
+            - name: NODE_ENV
+              value: {{ .Values.ragApi.env.NODE_ENV }}
+            - name: OLLAMA_HOST
+              value: {{ .Values.ragApi.env.OLLAMA_HOST }}
+          livenessProbe:
+            exec:
+              command:
+                - curl
+                - -f
+                - http://localhost:{{ .Values.ragApi.service.port }}/models
+            failureThreshold: 3
+            periodSeconds: 30
+            timeoutSeconds: 10
+          ports:
+            - containerPort: {{ .Values.ragApi.service.port }}
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /app/lancedb
+              name: rag-api-lancedb
+            - mountPath: /app/index_store
+              name: rag-api-indexstore
+            - mountPath: /app/shared_uploads
+              name: rag-api-shareduploads
+      restartPolicy: Always
+      volumes:
+        - name: rag-api-lancedb
+          persistentVolumeClaim:
+            claimName: rag-api-lancedb-claim
+        - name: rag-api-indexstore
+          persistentVolumeClaim:
+            claimName: rag-api-indexstore-claim
+        - name: rag-api-shareduploads
+          persistentVolumeClaim:
+            claimName: rag-api-shareduploads-claim
